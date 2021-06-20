@@ -1,5 +1,5 @@
 from data import *
-from datetime import date
+from datetime import date, datetime
 
 
 file = input("File?\t") or "base.db"
@@ -46,6 +46,12 @@ def test_start(ch:str, lst):
             return True
     return False
 
+def sommer(lst):
+    s = 0
+    for e in lst.values():
+        s += float(e)
+    return s
+
 def recap(a, b, dmax, dmin=None):
     charges = {}
     produits = {}
@@ -67,7 +73,11 @@ def recap(a, b, dmax, dmin=None):
     #print(str)
     #print(charges.values())
     #print(produits.values())
-    print(gsp(2), "Balance =", sum(produits.values()) - sum(charges.values()))
+    s_p = sommer(produits)
+    s_c = sommer(charges)
+    print(gsp(2), "Colonnes = ", s_c, s_p)
+    print(gsp(2), "Balance =", end = " ")
+    print(s_p - s_c)
 
 while True:
     op = input("Operation(a)? q = Quit, a = Add, s = See" + space).strip() or "a"
@@ -143,9 +153,10 @@ while True:
                 print(gsp(3) + "".ljust(60, " ") + str(sum_d).ljust(10, ' ') + str(sum_c))
                 print(gsp(3) + "Sum = " + str(solde))
             elif newline == "c":
-                dend = date.today()
+                dend = str(date.today())
                 dend = input(gsp(2) + f"End({dend})?" + space) or dend
-                dbeg = dend.replace(year = dend.year - 1)
+                dend_dt = datetime.strptime(dend, "%Y-%m-%d")
+                dbeg = str(dend_dt.replace(year = dend_dt.year - 1).date())
                 dbeg = input(gsp(2) + f"Begin({dbeg})?" + space) or dbeg
                 print(gsp(2), f"Compte de résultat du {dbeg} au {dend}")
                 recap(['6'], ['7'], dend, dbeg)
@@ -153,7 +164,7 @@ while True:
                 dend = date.today()
                 dend = input(gsp(2) + f"End({dend})?" + space) or dend
                 print(gsp(2), f"Bilan au {dend}")
-                recap(['2','3', '41', '42', '5'], ['1', '40', '44'], dend)
+                recap(['2','3', '41', '42', '5', '48', '49'], ['1', '40', '44'], dend)
             elif newline == "r":                        
                 request = input(gsp(1) + "Request?" + space)
                 cursor = db.execute_sql(request)
